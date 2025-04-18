@@ -1,0 +1,385 @@
+:root {
+    --primary-color: #4a6bff;
+    --secondary-color: #ff5c5c;
+    --text-color: #333333;
+    --bg-color: #ffffff;
+    --light-bg: #f5f5f5;
+    --font-size: 24px;
+    --debug-bg: #f0f0f0;
+    --debug-text: #333;
+    --debug-info: #2196F3;
+    --debug-success: #4CAF50;
+    --debug-warn: #FF9800;
+    --debug-error: #F44336;
+    --api-waiting: #ff9800;
+    --api-sending: #2196F3;
+    --api-processing: #9c27b0;
+    --api-finishing: #4CAF50;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+    --primary-color: #6281ff;
+    --secondary-color: #ff7070;
+    --text-color: #f0f0f0;
+    --bg-color: #222222;
+    --light-bg: #333333;
+    --debug-bg: #2a2a2a;
+    --debug-text: #f0f0f0;
+    --debug-info: #64B5F6;
+    --debug-success: #81C784;
+    --debug-warn: #FFB74D;
+    --debug-error: #E57373;
+    --api-waiting: #ffb74d;
+    --api-sending: #64B5F6;
+    --api-processing: #ce93d8;
+    --api-finishing: #81C784;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: var(--font-size);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    transition: all 0.3s ease;
+    line-height: 1.5;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: calc(var(--font-size) * 1.5);
+    color: var(--primary-color);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: var(--font-size);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ccc;
+}
+
+.indicator.active {
+    background-color: var(--secondary-color);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.result-container {
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.result-text {
+    min-height: 200px;
+    margin-bottom: 20px;
+    font-size: var(--font-size);
+    line-height: 1.6;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.settings {
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.font-settings, .theme-settings {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+input[type="range"] {
+    width: 150px;
+}
+
+.emotion-positive {
+    color: #4CAF50;
+}
+
+.emotion-negative {
+    color: #F44336;
+}
+
+.emotion-question {
+    color: #2196F3;
+}
+
+.emotion-exclamation {
+    color: #FF9800;
+}
+
+.debug-settings {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.debug-panel {
+    background-color: var(--debug-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    border: 1px solid var(--primary-color);
+}
+
+.debug-panel h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.debug-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.debug-log {
+    background-color: var(--light-bg);
+    border-radius: 5px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.log-entry {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.log-debug {
+    color: var(--debug-text);
+}
+
+.log-info {
+    color: var(--debug-info);
+}
+
+.log-success {
+    color: var(--debug-success);
+}
+
+.log-warn {
+    color: var(--debug-warn);
+}
+
+.log-error {
+    color: var(--debug-error);
+}
+
+/* Make the audio element in debug log smaller */
+.debug-log audio {
+    width: 100%;
+    margin: 10px 0;
+    height: 30px;
+}
+
+.prompt-settings {
+    margin-bottom: 20px;
+}
+
+.prompt-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+}
+
+.prompt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn.small {
+    padding: 8px 15px;
+    font-size: 16px;
+}
+
+.audio-settings {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .audio-settings {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.audio-settings h3 {
+    font-size: calc(var(--font-size) * 0.8);
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.setting-group {
+    margin-bottom: 12px;
+}
+
+.setting-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.setting-input.small {
+    width: 70px;
+    text-align: center;
+}
+
+.timestamp-settings {
+    margin-top: 12px;
+}
+
+.timestamp-inputs {
+    margin-top: 10px;
+}
+
+.timestamp-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Existing prompt settings... */
+
+.prompt-settings {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .prompt-settings {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* API status indicators */
+.api-waiting, .api-sending, .api-processing, .api-finishing {
+    display: inline-block;
+    animation: pulse-status 1.5s infinite;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.api-waiting {
+    color: var(--api-waiting);
+}
+
+.api-sending {
+    color: var(--api-sending);
+}
+
+.api-processing {
+    color: var(--api-processing);
+}
+
+.api-finishing {
+    color: var(--api-finishing);
+}
+
+@keyframes pulse-status {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Performance tables in debug log */
+.debug-log .log-info {
+    white-space: pre;
+} 

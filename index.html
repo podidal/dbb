@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аудио для глухонемых</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Аудио-помощник</h1>
+        </header>
+        
+        <main>
+            <div class="controls">
+                <button id="startRecording" class="btn primary">Начать запись</button>
+                <button id="stopRecording" class="btn secondary" disabled>Остановить запись</button>
+                <div id="recordingIndicator" class="indicator"></div>
+            </div>
+            
+            <div class="result-container">
+                <div id="resultText" class="result-text"></div>
+                <div class="actions">
+                    <button id="clearResult" class="btn">Очистить</button>
+                    <button id="saveResult" class="btn">Сохранить результат</button>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="settings">
+            <div class="audio-settings">
+                <h3>Настройки аудио</h3>
+                <div class="setting-group">
+                    <label for="audioAnalysisType">Тип анализа:</label>
+                    <select id="audioAnalysisType" class="setting-input">
+                        <option value="accessibility">Версия для глухонемых</option>
+                        <option value="transcript">Транскрипция</option>
+                        <option value="summary">Краткое содержание</option>
+                        <option value="analysis">Анализ содержания</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="audioFormat">Формат аудио:</label>
+                    <select id="audioFormat" class="setting-input">
+                        <option value="audio/webm">WebM (по умолчанию)</option>
+                        <option value="audio/mp3">MP3</option>
+                        <option value="audio/wav">WAV</option>
+                        <option value="audio/ogg">OGG</option>
+                    </select>
+                </div>
+                
+                <div class="timestamp-settings">
+                    <label>
+                        <input type="checkbox" id="useTimestamps">
+                        Использовать временные отрезки
+                    </label>
+                    <div class="timestamp-inputs" style="display: none;">
+                        <div class="timestamp-group">
+                            <label for="startTime">От:</label>
+                            <input type="text" id="startTime" placeholder="MM:SS" class="setting-input small">
+                            <label for="endTime">До:</label>
+                            <input type="text" id="endTime" placeholder="MM:SS" class="setting-input small">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="prompt-settings">
+                <label for="promptInput">Инструкция для нейросети:</label>
+                <textarea id="promptInput" rows="4" class="prompt-input"></textarea>
+                <div class="prompt-actions">
+                    <button id="resetPrompt" class="btn small">Сбросить</button>
+                    <button id="savePrompt" class="btn small primary">Сохранить</button>
+                    <button id="generatePrompt" class="btn small">Сгенерировать</button>
+                </div>
+            </div>
+            
+            <div class="font-settings">
+                <label for="fontSize">Размер шрифта:</label>
+                <input type="range" id="fontSize" min="18" max="36" value="24">
+                <span id="fontSizeValue">24px</span>
+            </div>
+            
+            <div class="theme-settings">
+                <label for="darkMode">Тёмная тема:</label>
+                <input type="checkbox" id="darkMode">
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html> 
