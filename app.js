@@ -56,6 +56,10 @@ function initApp() {
     // Create debug panel
     createDebugPanel();
     
+    // Update button text and icons
+    startButton.innerHTML = '🎤 Начать слушать';
+    stopButton.innerHTML = '✨ Распознать';
+    
     // Set up event listeners
     startButton.addEventListener('click', startRecording);
     stopButton.addEventListener('click', stopRecording);
@@ -295,7 +299,7 @@ async function startRecording() {
         startButton.disabled = true;
         stopButton.disabled = false;
         recordingIndicator.classList.add('active');
-        resultText.innerText = "Запись...";
+        resultText.innerText = "Слушаю...";
         
         // Disable changing formats during recording
         audioFormat.disabled = true;
@@ -322,7 +326,7 @@ function stopRecording() {
         startButton.disabled = false;
         stopButton.disabled = true;
         recordingIndicator.classList.remove('active');
-        resultText.innerText = "Обработка записи...";
+        resultText.innerText = "Распознавание аудио...";
         
         // Re-enable format selection
         audioFormat.disabled = false;
@@ -388,7 +392,7 @@ async function processAudio() {
         
     } catch (error) {
         log(`Ошибка при обработке аудио: ${error.message}`, 'error');
-        showError("Ошибка при обработке аудио: " + error.message);
+        showError("Ошибка при распознавании аудио: " + error.message);
     } finally {
         markTime('processEnd');
         const totalTime = measureTime('processStart', 'processEnd', 'Общее время обработки');
@@ -486,7 +490,7 @@ async function sendToGeminiAPI(base64Audio, mimeType) {
         
         markTime('apiNetworkEnd');
         const networkTime = measureTime('apiNetworkStart', 'apiNetworkEnd', 'Сетевое взаимодействие заняло');
-        updateRequestStatus(2, "Ответ получен, обработка данных...");
+        updateRequestStatus(2, "Получен ответ, распознавание...");
         
         log(`Ответ получен, статус: ${response.status}, время: ${networkTime}ms`);
         
@@ -503,7 +507,7 @@ async function sendToGeminiAPI(base64Audio, mimeType) {
         measureTime('apiParsingStart', 'apiParsingEnd', 'Парсинг JSON ответа занял');
         
         log('Ответ успешно преобразован в JSON');
-        updateRequestStatus(3, "Обработка ответа...");
+        updateRequestStatus(3, "Обработка результата...");
         
         // For debugging, log the full response in console
         if (isDebugMode) {
@@ -533,7 +537,7 @@ async function sendToGeminiAPI(base64Audio, mimeType) {
         
     } catch (error) {
         log(`Ошибка при отправке в Gemini API: ${error.message}`, 'error');
-        showError("Ошибка при отправке в Gemini API: " + error.message);
+        showError("Ошибка при распознавании в Gemini API: " + error.message);
         markTime('apiCallEnd'); // Все равно отмечаем время окончания для статистики
     } finally {
         // Stop the request timer animation
