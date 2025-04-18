@@ -53,42 +53,115 @@ document.addEventListener('DOMContentLoaded', initApp);
 function initApp() {
     log('Инициализация приложения');
     
-    // Create debug panel
-    createDebugPanel();
-    
-    // Update button text and icons
-    startButton.innerHTML = '🎤 Начать слушать';
-    stopButton.innerHTML = '✨ Распознать';
-    
-    // Set up event listeners
-    startButton.addEventListener('click', startRecording);
-    stopButton.addEventListener('click', stopRecording);
-    clearButton.addEventListener('click', clearResult);
-    saveButton.addEventListener('click', saveResult);
-    fontSizeInput.addEventListener('input', updateFontSize);
-    darkModeToggle.addEventListener('change', toggleDarkMode);
-    debugToggle.addEventListener('change', toggleDebugMode);
-    savePromptButton.addEventListener('click', savePrompt);
-    resetPromptButton.addEventListener('click', resetPrompt);
-    generatePromptButton.addEventListener('click', generatePrompt);
-    audioAnalysisType.addEventListener('change', updatePromptBasedOnAnalysisType);
-    useTimestamps.addEventListener('change', toggleTimestampInputs);
-    
-    // Set default prompt if none exists
-    initPrompt();
-    
-    // Check for saved preferences
-    loadPreferences();
-    
-    // Check if media recording is available
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showError("Ваш браузер не поддерживает запись аудио!");
-        log('Error: Браузер не поддерживает MediaRecorder API', 'error');
-        disableRecordingButtons();
-        return;
+    try {
+        // Create debug panel - this needs to happen first to initialize debugToggle
+        createDebugPanel();
+        
+        // Update button text and icons if elements exist
+        if (startButton && stopButton) {
+            startButton.innerHTML = '🎤 Начать слушать';
+            stopButton.innerHTML = '✨ Распознать';
+        } else {
+            log('Warning: Recording buttons not found', 'warn');
+        }
+        
+        // Set up event listeners with null checks
+        if (startButton) {
+            startButton.addEventListener('click', startRecording);
+        } else {
+            log('Warning: startButton element is missing', 'warn');
+        }
+        
+        if (stopButton) {
+            stopButton.addEventListener('click', stopRecording);
+        } else {
+            log('Warning: stopButton element is missing', 'warn');
+        }
+        
+        if (clearButton) {
+            clearButton.addEventListener('click', clearResult);
+        } else {
+            log('Warning: clearButton element is missing', 'warn');
+        }
+        
+        if (saveButton) {
+            saveButton.addEventListener('click', saveResult);
+        } else {
+            log('Warning: saveButton element is missing', 'warn');
+        }
+        
+        if (fontSizeInput) {
+            fontSizeInput.addEventListener('input', updateFontSize);
+        } else {
+            log('Warning: fontSizeInput element is missing', 'warn');
+        }
+        
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('change', toggleDarkMode);
+        } else {
+            log('Warning: darkModeToggle element is missing', 'warn');
+        }
+        
+        // These elements are created dynamically, so make sure they exist before adding listeners
+        if (debugToggle) {
+            debugToggle.addEventListener('change', toggleDebugMode);
+        } else {
+            log('Warning: debugToggle element is missing', 'warn');
+        }
+        
+        if (savePromptButton) {
+            savePromptButton.addEventListener('click', savePrompt);
+        } else {
+            log('Warning: savePromptButton element is missing', 'warn');
+        }
+        
+        if (resetPromptButton) {
+            resetPromptButton.addEventListener('click', resetPrompt);
+        } else {
+            log('Warning: resetPromptButton element is missing', 'warn');
+        }
+        
+        if (generatePromptButton) {
+            generatePromptButton.addEventListener('click', generatePrompt);
+        } else {
+            log('Warning: generatePromptButton element is missing', 'warn');
+        }
+        
+        if (audioAnalysisType) {
+            audioAnalysisType.addEventListener('change', updatePromptBasedOnAnalysisType);
+        } else {
+            log('Warning: audioAnalysisType element is missing', 'warn');
+        }
+        
+        if (useTimestamps) {
+            useTimestamps.addEventListener('change', toggleTimestampInputs);
+        } else {
+            log('Warning: useTimestamps element is missing', 'warn');
+        }
+        
+        // Set default prompt if none exists
+        if (promptInput) {
+            initPrompt();
+        } else {
+            log('Warning: promptInput element is missing', 'warn');
+        }
+        
+        // Check for saved preferences
+        loadPreferences();
+        
+        // Check if media recording is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showError("Ваш браузер не поддерживает запись аудио!");
+            log('Error: Браузер не поддерживает MediaRecorder API', 'error');
+            disableRecordingButtons();
+            return;
+        }
+        
+        log('Приложение инициализировано успешно');
+    } catch (err) {
+        log(`Ошибка при инициализации приложения: ${err.message}`, 'error');
+        console.error('Initialization error:', err);
     }
-    
-    log('Приложение инициализировано успешно');
 }
 
 // Toggle timestamp inputs visibility
@@ -165,74 +238,128 @@ function resetPrompt() {
 
 // Create Debug Panel
 function createDebugPanel() {
-    // Create debug toggle in settings
-    const settingsEl = document.querySelector('.settings');
-    
-    const debugToggleContainer = document.createElement('div');
-    debugToggleContainer.className = 'debug-settings';
-    debugToggleContainer.innerHTML = `
-        <label for="debugMode">Режим отладки:</label>
-        <input type="checkbox" id="debugMode">
-    `;
-    settingsEl.appendChild(debugToggleContainer);
-    
-    debugToggle = document.getElementById('debugMode');
-    
-    // Create debug panel
-    debugPanel = document.createElement('div');
-    debugPanel.className = 'debug-panel';
-    debugPanel.style.display = 'none';
-    
-    debugPanel.innerHTML = `
-        <h3>Отладочная информация</h3>
-        <div class="debug-actions">
-            <button id="clearDebug" class="btn">Очистить логи</button>
-            <button id="copyDebug" class="btn">Копировать логи</button>
-        </div>
-        <div id="debugLog" class="debug-log"></div>
-    `;
-    
-    document.querySelector('.app-container').appendChild(debugPanel);
-    
-    debugLog = document.getElementById('debugLog');
-    
-    // Add event listeners for debug panel buttons
-    document.getElementById('clearDebug').addEventListener('click', () => {
-        debugLog.innerHTML = '';
-        log('Логи очищены', 'info');
-    });
-    
-    document.getElementById('copyDebug').addEventListener('click', () => {
-        const logText = debugLog.innerText;
-        navigator.clipboard.writeText(logText)
-            .then(() => log('Логи скопированы в буфер обмена', 'success'))
-            .catch(err => log('Ошибка при копировании: ' + err, 'error'));
-    });
+    try {
+        log('Creating debug panel');
+        
+        // Create debug toggle in settings
+        const settingsEl = document.querySelector('.settings');
+        
+        if (!settingsEl) {
+            log('Error: Settings element not found in DOM', 'error');
+            return;
+        }
+        
+        const debugToggleContainer = document.createElement('div');
+        debugToggleContainer.className = 'debug-settings';
+        debugToggleContainer.innerHTML = `
+            <label for="debugMode">Режим отладки:</label>
+            <input type="checkbox" id="debugMode">
+        `;
+        settingsEl.appendChild(debugToggleContainer);
+        
+        debugToggle = document.getElementById('debugMode');
+        
+        if (!debugToggle) {
+            log('Error: Failed to initialize debugToggle element', 'error');
+            return;
+        }
+        
+        // Create debug panel
+        debugPanel = document.createElement('div');
+        debugPanel.className = 'debug-panel';
+        debugPanel.style.display = 'none';
+        
+        debugPanel.innerHTML = `
+            <h3>Отладочная информация</h3>
+            <div class="debug-actions">
+                <button id="clearDebug" class="btn">Очистить логи</button>
+                <button id="copyDebug" class="btn">Копировать логи</button>
+            </div>
+            <div id="debugLog" class="debug-log"></div>
+        `;
+        
+        const appContainer = document.querySelector('.app-container');
+        if (!appContainer) {
+            log('Error: App container element not found in DOM', 'error');
+            return;
+        }
+        
+        appContainer.appendChild(debugPanel);
+        
+        debugLog = document.getElementById('debugLog');
+        
+        if (!debugLog) {
+            log('Error: Failed to initialize debugLog element', 'error');
+            return;
+        }
+        
+        // Add event listeners for debug panel buttons
+        const clearDebugBtn = document.getElementById('clearDebug');
+        const copyDebugBtn = document.getElementById('copyDebug');
+        
+        if (clearDebugBtn) {
+            clearDebugBtn.addEventListener('click', () => {
+                debugLog.innerHTML = '';
+                log('Логи очищены', 'info');
+            });
+        } else {
+            log('Warning: clearDebug button element is missing', 'warn');
+        }
+        
+        if (copyDebugBtn) {
+            copyDebugBtn.addEventListener('click', () => {
+                const logText = debugLog.innerText;
+                navigator.clipboard.writeText(logText)
+                    .then(() => log('Логи скопированы в буфер обмена', 'success'))
+                    .catch(err => log('Ошибка при копировании: ' + err, 'error'));
+            });
+        } else {
+            log('Warning: copyDebug button element is missing', 'warn');
+        }
+        
+        log('Debug panel created successfully', 'info');
+    } catch (err) {
+        console.error('Error creating debug panel:', err);
+        // Ensure debugToggle is at least defined to prevent further errors
+        if (!debugToggle) debugToggle = null;
+        if (!debugPanel) debugPanel = null;
+        if (!debugLog) debugLog = null;
+    }
 }
 
 // Logging function
 function log(message, level = 'debug') {
-    const timestamp = new Date().toLocaleTimeString();
-    const logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-    
-    // Always log to console
-    if (level === 'error') {
-        console.error(logEntry);
-    } else if (level === 'warn') {
-        console.warn(logEntry);
-    } else {
-        console.log(logEntry);
-    }
-    
-    // Add to debug panel if exists and debug mode is on
-    if (debugLog && isDebugMode) {
-        const logItem = document.createElement('div');
-        logItem.className = `log-entry log-${level}`;
-        logItem.textContent = logEntry;
-        debugLog.appendChild(logItem);
+    try {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
         
-        // Auto-scroll to bottom
-        debugLog.scrollTop = debugLog.scrollHeight;
+        // Always log to console
+        if (level === 'error') {
+            console.error(logEntry);
+        } else if (level === 'warn') {
+            console.warn(logEntry);
+        } else {
+            console.log(logEntry);
+        }
+        
+        // Add to debug panel if exists and debug mode is on
+        if (debugLog && isDebugMode) {
+            try {
+                const logItem = document.createElement('div');
+                logItem.className = `log-entry log-${level}`;
+                logItem.textContent = logEntry;
+                debugLog.appendChild(logItem);
+                
+                // Auto-scroll to bottom
+                debugLog.scrollTop = debugLog.scrollHeight;
+            } catch (err) {
+                console.error('Error adding log to debug panel:', err);
+            }
+        }
+    } catch (err) {
+        // Fallback to plain console log if something goes wrong
+        console.error('Logging error:', err);
+        console.log(message);
     }
 }
 
